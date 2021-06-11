@@ -13,8 +13,8 @@ grep patch-package node_modules/@types/lodash/index.d.ts
 grep patchPackage node_modules/lodash/index.js
 
 echo "make sure the files were still named like before"
-ls patches/lodash:4.17.11.patch
-ls patches/@types/lodash:4.14.120.patch
+ls patches/lodash-4.17.11.patch
+ls patches/@types/lodash-4.14.120.patch
 
 echo "make patch files again"
 patch-package lodash @types/lodash
@@ -24,10 +24,10 @@ grep patch-package node_modules/@types/lodash/index.d.ts
 grep patchPackage node_modules/lodash/index.js
 
 echo "make sure the file names have changed"
-if ls patches/lodash:4.17.11.patch; then
+if ls patches/lodash-4.17.11.patch; then
   exit 1
 fi
-if ls patches/@types/lodash:4.14.120.patch; then
+if ls patches/@types/lodash-4.14.120.patch; then
   exit 1
 fi
 ls patches/lodash+4.17.11.patch
