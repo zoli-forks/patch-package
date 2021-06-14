@@ -239,7 +239,7 @@ export function applyPatch({
 }): boolean {
   const patch = readPatch({ patchFilePath, packageDetails, patchDir })
   try {
-    executeEffects(reverse ? reversePatch(patch) : patch, { dryRun: false })
+    return executeEffects(reverse ? reversePatch(patch) : patch, { dryRun: false })
   } catch (e) {
     try {
       executeEffects(reverse ? patch : reversePatch(patch), { dryRun: true })

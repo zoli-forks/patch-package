@@ -7,6 +7,7 @@ export const executeEffects = (
   effects: ParsedPatchFile,
   { dryRun }: { dryRun: boolean },
 ) => {
+  let success = true
   effects.forEach(eff => {
     switch (eff.type) {
       case "file deletion":
@@ -51,7 +52,9 @@ export const executeEffects = (
         }
         break
       case "patch":
-        applyPatch(eff, { dryRun })
+        if (applyPatch(eff, { dryRun }) === false) {
+          success = false
+        }
         break
       case "mode change":
         const currentMode = fs.statSync(eff.path).mode
@@ -68,6 +71,7 @@ export const executeEffects = (
         assertNever(eff)
     }
   })
+  return success
 }
 
 function isExecutable(fileMode: number) {
@@ -105,7 +109,7 @@ function linesAreEqual(a: string, b: string) {
 function applyPatch(
   { hunks, path }: FilePatch,
   { dryRun }: { dryRun: boolean },
-): void {
+): void | false {
   // modifying the file in place
   const fileContents = fs.readFileSync(path).toString()
   const mode = fs.statSync(path).mode
@@ -127,9 +131,10 @@ function applyPatch(
         fuzzingOffset < 0 ? fuzzingOffset * -1 : fuzzingOffset * -1 - 1
 
       if (Math.abs(fuzzingOffset) > 20) {
-        throw new Error(
+        console.error(
           `Cant apply hunk ${hunks.indexOf(hunk)} for file ${path}`,
         )
+        return false
       }
     }
   }
